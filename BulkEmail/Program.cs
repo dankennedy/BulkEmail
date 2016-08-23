@@ -73,6 +73,9 @@ namespace BulkEmail
                         From = new MailAddress(Options.From)
                     };
 
+                if (!string.IsNullOrEmpty(Options.AttachmentFilePath))
+                    msg.Attachments.Add(new Attachment(Options.AttachmentFilePath));
+
                 while ((line = reader.ReadLine()) != null)
                 {
                     if (!EmailRegex.IsMatch(line))
@@ -96,6 +99,9 @@ namespace BulkEmail
                             IsBodyHtml = Options.IsHtml,
                             From = new MailAddress(Options.From)
                         };
+
+                    if (!string.IsNullOrEmpty(Options.AttachmentFilePath))
+                        msg.Attachments.Add(new Attachment(Options.AttachmentFilePath));
                 }
 
                 if (msg.Bcc.Count <= 0) 

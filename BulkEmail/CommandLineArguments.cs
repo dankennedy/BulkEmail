@@ -12,6 +12,7 @@ namespace BulkEmail
         private const string ARG_FROM = "f";
         private const string ARG_MSGFILE = "msgf";
         private const string ARG_RECIPIENTFILE = "rcpf";
+        private const string ARG_ATTACHMENTFILE = "attf";
         private const string ARG_HTML = "html";
         private const string ARG_BATCHSIZE = "b";
 
@@ -21,6 +22,7 @@ namespace BulkEmail
                                                        ARG_FROM,
                                                        ARG_MSGFILE,
                                                        ARG_RECIPIENTFILE,
+                                                       ARG_ATTACHMENTFILE,
                                                        ARG_BATCHSIZE
                                                    };
         public CommandLineArguments(string[] args) : base(args)
@@ -57,6 +59,11 @@ namespace BulkEmail
             get { return Parameters[ARG_RECIPIENTFILE] ?? ""; }
         }
 
+        public string AttachmentFilePath
+        {
+            get { return Parameters[ARG_ATTACHMENTFILE] ?? ""; }
+        }
+
         public bool IsHtml
         {
             get { return Parameters.ContainsKey(ARG_HTML); }
@@ -73,7 +80,7 @@ namespace BulkEmail
 
                 int test;
                 if (!int.TryParse(stringBatch, out test))
-                    throw new ArgumentException(string.Format("Invalid batch szie specified ({0})", stringBatch), "Batch");
+                    throw new ArgumentException(string.Format("Invalid batch size specified ({0})", stringBatch), "Batch");
 
                 return test;
             }
@@ -90,6 +97,7 @@ namespace BulkEmail
                                      "             [-f From]\r\n",
                                      "             [-msgf Path to file containing message text]\r\n",
                                      "             [-rcpf Path to file containing email addresses]\r\n",
+                                     "             [-attf Path to file to attach]\r\n",
                                      "             [-b Batch size, default 50]\r\n",
                                      "             [-html Send in Html format, default false]\r\n",
                                      "\r\n",
@@ -117,6 +125,9 @@ namespace BulkEmail
 
             if (string.IsNullOrEmpty(RecipientFilePath) || !File.Exists(RecipientFilePath))
                 validationErrors.Add("Invalid recipient file path");
+
+            if (!string.IsNullOrEmpty(AttachmentFilePath) && !File.Exists(AttachmentFilePath))
+                validationErrors.Add("Invalid attachment file path");
 
             if (string.IsNullOrEmpty(Subject))
                 validationErrors.Add("No subject specified");
